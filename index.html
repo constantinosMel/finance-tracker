@@ -282,12 +282,29 @@
                         <button class="btn btn-secondary" onclick="exportData()">Export JSON</button>
                         <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
                         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
-                        <button class="btn btn-danger" onclick="resetData()">Reset All Data</button>
+                        <button type="button" class="btn btn-danger" onclick="openConfirmReset()">Reset All Data</button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Confirm Reset Modal -->
+    <div class="modal-overlay" id="confirmResetModal">
+        <div class="modal" style="max-width:380px">
+            <div class="modal-header">
+                <span class="modal-title">Reset All Data?</span>
+                <button class="modal-close" onclick="closeModal('confirmResetModal')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">This will permanently delete all transactions, recurring items, debts, and settings. Sample data will be loaded. This cannot be undone.</p>
+            <div class="flex gap-2 justify-between">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('confirmResetModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="resetData()">Yes, Reset Everything</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Transaction Modal -->
     <div class="modal-overlay" id="transactionModal">
@@ -1155,14 +1172,19 @@ function importData(input) {
     input.value = '';
 }
 
+function openConfirmReset() {
+    openModal('confirmResetModal');
+}
+
 function resetData() {
-    if (!confirm('Reset ALL data? This cannot be undone.')) return;
+    closeModal('confirmResetModal');
     localStorage.removeItem('financeTracker_v2');
     transactions = []; recurring = []; debts = [];
     settings = { currency: '€', payday: 1 };
     loadSampleData();
     document.getElementById('settingCurrency').value = settings.currency;
     document.getElementById('settingPayday').value = settings.payday;
+    updatePeriodDisplay();
     renderAll();
 }
 
