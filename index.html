@@ -1179,9 +1179,10 @@ function openConfirmReset() {
 function resetData() {
     closeModal('confirmResetModal');
     localStorage.removeItem('financeTracker_v2');
+    localStorage.removeItem('financeTrackerData'); // clear legacy key too
     transactions = []; recurring = []; debts = [];
     settings = { currency: '€', payday: 1 };
-    loadSampleData();
+    saveData();
     document.getElementById('settingCurrency').value = settings.currency;
     document.getElementById('settingPayday').value = settings.payday;
     updatePeriodDisplay();
